@@ -29,14 +29,6 @@ databaseChangeLog:
                   name: created_at
 
         - createIndex:
-            tableName: items
-            indexName: idx_items_name
-
-            columns:
-              - column:
-                  name: name
-
-        - createIndex:
             tableName: order_items
             indexName: idx_order_items_order_id
 
