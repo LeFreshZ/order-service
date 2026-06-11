@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class OrderItemDao {
+
   private final OrderItemRepository repository;
 
   public Optional<OrderItem> findById(Long id) {
