@@ -12,26 +12,26 @@ public class OrderSpecification {
   }
 
   public static Specification<Order> hasStatus(Status status) {
-    return (((root, query, criteriaBuilder) ->
-        status == null ? null : criteriaBuilder.equal(root.get("status"), status))
+    return ((root, query, criteriaBuilder) ->
+        status == null ? null : criteriaBuilder.equal(root.get("status"), status)
     );
   }
 
   public static Specification<Order> hasFromDate(LocalDateTime from) {
-    return (((root, query, criteriaBuilder) ->
-        from == null ? null : criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"), from))
+    return ((root, query, criteriaBuilder) ->
+        from == null ? null : criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"), from)
     );
   }
 
   public static Specification<Order> hasToDate(LocalDateTime to) {
-    return (((root, query, criteriaBuilder) ->
-        to == null ? null : criteriaBuilder.lessThanOrEqualTo(root.get("createdAt"), to))
+    return ((root, query, criteriaBuilder) ->
+        to == null ? null : criteriaBuilder.lessThanOrEqualTo(root.get("createdAt"), to)
     );
   }
 
   public static Specification<Order> isNotDeleted() {
-    return (((root, query, criteriaBuilder) ->
-        criteriaBuilder.equal(root.get("deleted"), false))
+    return ((root, query, criteriaBuilder) ->
+        criteriaBuilder.equal(root.get("deleted"), false)
     );
   }
 }
