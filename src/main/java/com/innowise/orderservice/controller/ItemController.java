@@ -32,7 +32,7 @@ public class ItemController {
 
   @GetMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-  public  ResponseEntity<ItemResponse> getItemById(@PathVariable Long id) {
+  public ResponseEntity<ItemResponse> getItemById(@PathVariable Long id) {
     return ResponseEntity.ok(service.getItemById(id));
   }
 
