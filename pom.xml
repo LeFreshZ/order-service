@@ -107,11 +107,9 @@
       <artifactId>postgresql</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- Source: https://mvnrepository.com/artifact/org.wiremock/wiremock -->
     <dependency>
-      <groupId>org.wiremock</groupId>
-      <artifactId>wiremock</artifactId>
-      <version>3.13.2</version>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-contract-wiremock</artifactId>
       <scope>test</scope>
     </dependency>
 	</dependencies>
