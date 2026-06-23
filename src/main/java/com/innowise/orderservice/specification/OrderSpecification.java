@@ -3,6 +3,7 @@ package com.innowise.orderservice.specification;
 import com.innowise.orderservice.entity.Order;
 import com.innowise.orderservice.entity.enums.Status;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
 public class OrderSpecification {
@@ -11,10 +12,9 @@ public class OrderSpecification {
 
   }
 
-  public static Specification<Order> hasStatus(Status status) {
+  public static Specification<Order> hasStatuses(List<Status> statuses) {
     return ((root, query, criteriaBuilder) ->
-        status == null ? null : criteriaBuilder.equal(root.get("status"), status)
-    );
+        statuses == null || statuses.isEmpty() ? null : root.get("status").in(statuses));
   }
 
   public static Specification<Order> hasFromDate(LocalDateTime from) {

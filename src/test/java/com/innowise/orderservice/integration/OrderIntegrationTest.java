@@ -115,7 +115,7 @@ class OrderIntegrationTest extends IntegrationTest {
         .andExpect(status().isCreated());
 
     mvc.perform(get("/orders")
-        .param("status", "CREATED"))
+        .param("statuses", "CREATED"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content[0].status").value("CREATED"));
   }

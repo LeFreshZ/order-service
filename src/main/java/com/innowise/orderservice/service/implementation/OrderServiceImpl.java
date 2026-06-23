@@ -23,6 +23,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,8 +70,14 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  public OrderResponse getOrderById(Long id) {
-    return injectUser(mapper.toResponse(findOrderById(id)));
+  public OrderResponse getOrderById(Long id, Long currentUserId, boolean isAdmin) {
+    Order order = findOrderById(id);
+
+    if (!isAdmin && !order.getUserId().equals(currentUserId)) {
+      throw new AccessDeniedException("Access denied");
+    }
+
+    return injectUser(mapper.toResponse(order));
   }
 
   @Override

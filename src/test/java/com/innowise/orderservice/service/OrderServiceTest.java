@@ -138,7 +138,7 @@ class OrderServiceTest {
     when(orderDao.findById(1L)).thenReturn(Optional.of(order));
     when(userServiceClient.getUserById(1L)).thenReturn(response);
 
-    OrderResponse orderResponse = service.getOrderById(1L);
+    OrderResponse orderResponse = service.getOrderById(1L, 1L, false);
 
     assertEquals(1L, orderResponse.getId());
     assertEquals("Andrey", orderResponse.getUserResponse().getName());
@@ -148,7 +148,7 @@ class OrderServiceTest {
   void shouldThrowWhenOrderNotFound() {
     when(orderDao.findById(99L)).thenReturn(Optional.empty());
 
-    assertThrows(OrderNotFoundException.class, () -> service.getOrderById(99L));
+    assertThrows(OrderNotFoundException.class, () -> service.getOrderById(99L, 1L, false));
   }
 
   @Test
@@ -210,7 +210,7 @@ class OrderServiceTest {
     when(orderDao.findById(1L)).thenReturn(Optional.of(order));
     when(userServiceClient.getUserById(1L)).thenReturn(null);
 
-    OrderResponse orderResponse = service.getOrderById(1L);
+    OrderResponse orderResponse = service.getOrderById(1L, 1L, false);
 
     assertEquals(1L, orderResponse.getId());
     assertNull(orderResponse.getUserResponse());

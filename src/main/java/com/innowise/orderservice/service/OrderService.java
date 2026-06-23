@@ -39,12 +39,24 @@ public interface OrderService {
    *
    * <p>Enriches the response with user info retrieved from User Service.
    *
-   * @param id the unique identifier of the order
+   * <p>Access control: admins can retrieve any order. Users can only retrieve
+   * their own orders — if the order does not belong to the requesting user,
+   * {@link org.springframework.security.access.AccessDeniedException} is thrown.
+   *
+   * @param id            the unique identifier of the order
+   * @param currentUserId the ID of the currently authenticated user, extracted from the
+   *                      security context
+   * @param isAdmin       {@code true} if the requesting user has the admin role,
+   *                      {@code false} otherwise
    * @return the found order as a {@link OrderResponse} with user info
-   * @throws com.innowise.orderservice.exception.OrderNotFoundException if no order with the given
-   *                                                                    ID exists or it is deleted
+   * @throws com.innowise.orderservice.exception.OrderNotFoundException       if no order with the
+   *                                                                          given ID exists or it
+   *                                                                          is deleted
+   * @throws org.springframework.security.access.AccessDeniedException        if the requesting user
+   *                                                                          is not the owner of
+   *                                                                          the order
    */
-  OrderResponse getOrderById(Long id);
+  OrderResponse getOrderById(Long id, Long currentUserId, boolean isAdmin);
 
   /**
    * Retrieves a paginated list of orders matching the given specification.

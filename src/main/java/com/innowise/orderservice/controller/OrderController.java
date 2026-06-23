@@ -9,12 +9,14 @@ import com.innowise.orderservice.service.OrderService;
 import com.innowise.orderservice.specification.OrderSpecification;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,9 +41,13 @@ public class OrderController {
   }
 
   @GetMapping("/{id}")
-  @PreAuthorize("hasRole('ADMIN') or principal == #id")
-  public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long id) {
-    return ResponseEntity.ok(service.getOrderById(id));
+  @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+  public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long id, Authentication authentication) {
+    Long currentUserId = (Long) authentication.getPrincipal();
+    boolean isAdmin = authentication.getAuthorities().stream()
+        .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+    return ResponseEntity.ok(service.getOrderById(id, currentUserId, isAdmin));
   }
 
   @GetMapping
@@ -49,13 +55,13 @@ public class OrderController {
   public ResponseEntity<Page<OrderResponse>> getOrders(
       @RequestParam(required = false) LocalDateTime from,
       @RequestParam(required = false) LocalDateTime to,
-      @RequestParam(required = false) Status status,
+      @RequestParam(required = false) List<Status> statuses,
       Pageable pageable) {
 
     Specification<Order> specification = Specification.allOf(
         OrderSpecification.hasFromDate(from),
         OrderSpecification.hasToDate(to),
-        OrderSpecification.hasStatus(status),
+        OrderSpecification.hasStatuses(statuses),
         OrderSpecification.isNotDeleted()
     );
 
