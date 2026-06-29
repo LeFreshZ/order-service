@@ -106,7 +106,7 @@ class OrderServiceTest {
 
     when(itemDao.findById(1L)).thenReturn(Optional.of(item));
     when(orderDao.save(any(Order.class))).thenReturn(order);
-    when(userServiceClient.getUserById(1L)).thenReturn(response);
+    when(userServiceClient.getUserById(1L)).thenReturn(Optional.of(response));
 
     OrderResponse orderResponse = service.createOrder(request);
 
@@ -136,7 +136,7 @@ class OrderServiceTest {
   @Test
   void shouldReturnOrderById() {
     when(orderDao.findById(1L)).thenReturn(Optional.of(order));
-    when(userServiceClient.getUserById(1L)).thenReturn(response);
+    when(userServiceClient.getUserById(1L)).thenReturn(Optional.of(response));
 
     OrderResponse orderResponse = service.getOrderById(1L, 1L, false);
 
@@ -158,7 +158,7 @@ class OrderServiceTest {
     Page<Order> orders = new PageImpl<>(List.of(order));
 
     when(orderDao.findAllBySpecification(specification, pageable)).thenReturn(orders);
-    when(userServiceClient.getUserById(1L)).thenReturn(response);
+    when(userServiceClient.getUserById(1L)).thenReturn(Optional.of(response));
 
     Page<OrderResponse> orderResponses = service.getOrders(specification, pageable);
 
@@ -172,7 +172,7 @@ class OrderServiceTest {
     Page<Order> orders = new PageImpl<>(List.of(order));
 
     when(orderDao.findAllByUserId(1L, pageable)).thenReturn(orders);
-    when(userServiceClient.getUserById(1L)).thenReturn(response);
+    when(userServiceClient.getUserById(1L)).thenReturn(Optional.of(response));
 
     Page<OrderResponse> orderResponses = service.getOrdersByUserId(1L, pageable);
 
@@ -187,7 +187,7 @@ class OrderServiceTest {
 
     when(orderDao.findById(1L)).thenReturn(Optional.of(order));
     when(orderDao.save(any(Order.class))).thenAnswer(invocation -> invocation.getArgument(0));
-    when(userServiceClient.getUserById(1L)).thenReturn(response);
+    when(userServiceClient.getUserById(1L)).thenReturn(Optional.of(response));
 
     OrderResponse orderResponse = service.updateOrder(1L, request);
 
@@ -208,7 +208,7 @@ class OrderServiceTest {
   @Test
   void shouldReturnNullWhenUserServiceUnavailable() {
     when(orderDao.findById(1L)).thenReturn(Optional.of(order));
-    when(userServiceClient.getUserById(1L)).thenReturn(null);
+    when(userServiceClient.getUserById(1L)).thenReturn(Optional.empty());
 
     OrderResponse orderResponse = service.getOrderById(1L, 1L, false);
 

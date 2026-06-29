@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -27,6 +28,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
@@ -119,9 +121,16 @@ public class OrderServiceImpl implements OrderService {
   }
 
   private OrderResponse injectUser(OrderResponse response) {
-    UserResponse userResponse = userServiceClient.getUserById(response.getUserId());
+    Optional<UserResponse> optionalUserResponse = userServiceClient.getUserById(
+        response.getUserId());
 
-    response.setUserResponse(userResponse);
+    if (optionalUserResponse.isEmpty()) {
+      log.warn("User Service unavailable — userResponse will be empty for userId={}",
+          response.getUserId());
+      return response;
+    }
+
+    response.setUserResponse(optionalUserResponse.get());
 
     return response;
   }

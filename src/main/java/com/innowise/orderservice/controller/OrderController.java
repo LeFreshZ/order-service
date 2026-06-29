@@ -42,7 +42,8 @@ public class OrderController {
 
   @GetMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-  public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long id, Authentication authentication) {
+  public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long id,
+      Authentication authentication) {
     Long currentUserId = (Long) authentication.getPrincipal();
     boolean isAdmin = authentication.getAuthorities().stream()
         .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));

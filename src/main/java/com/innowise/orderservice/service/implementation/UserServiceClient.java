@@ -1,6 +1,7 @@
 package com.innowise.orderservice.service.implementation;
 
 import com.innowise.orderservice.dto.UserResponse;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,8 @@ public class UserServiceClient {
     this.circuitBreakerFactory = circuitBreakerFactory;
   }
 
-  public UserResponse getUserById(Long userId) {
-    return circuitBreakerFactory.create("user-service")
+  public Optional<UserResponse> getUserById(Long userId) {
+    UserResponse response = circuitBreakerFactory.create("user-service")
         .run(
             webClient.get()
                 .uri("/users/{id}", userId)
@@ -31,5 +32,7 @@ public class UserServiceClient {
                 .bodyToMono(UserResponse.class),
             throwable -> Mono.empty()
         ).block();
+
+    return Optional.ofNullable(response);
   }
 }
