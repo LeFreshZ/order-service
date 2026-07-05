@@ -11,16 +11,19 @@ import reactor.core.publisher.Mono;
 @Service
 public class UserServiceClient {
 
+  private final String internalSecret;
   private final WebClient webClient;
   private final ReactiveCircuitBreakerFactory<?, ?> circuitBreakerFactory;
 
   public UserServiceClient(
       WebClient.Builder builder,
       ReactiveCircuitBreakerFactory<?, ?> circuitBreakerFactory,
-      @Value("${user-service.url}") String userServiceUrl) {
+      @Value("${user-service.url}") String userServiceUrl,
+      @Value("${internal.secret}") String internalSecret) {
 
     this.webClient = builder.baseUrl(userServiceUrl).build();
     this.circuitBreakerFactory = circuitBreakerFactory;
+    this.internalSecret = internalSecret;
   }
 
   public Optional<UserResponse> getUserById(Long userId) {
@@ -28,6 +31,7 @@ public class UserServiceClient {
         .run(
             webClient.get()
                 .uri("/users/{id}", userId)
+                .header("X-Internal-Secret", internalSecret)
                 .retrieve()
                 .bodyToMono(UserResponse.class),
             throwable -> Mono.empty()

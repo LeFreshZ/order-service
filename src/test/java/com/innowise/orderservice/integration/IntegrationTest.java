@@ -42,6 +42,7 @@ public abstract class IntegrationTest {
     registry.add("spring.datasource.password", TestContainersConfig.POSTGRES::getPassword);
     registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
     registry.add("user-service.url", () -> "http://localhost:8089");
+    registry.add("internal.secret", () -> "test-secret");
   }
 
   protected MockMvc mvc;
