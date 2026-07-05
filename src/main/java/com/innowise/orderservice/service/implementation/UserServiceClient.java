@@ -2,12 +2,14 @@ package com.innowise.orderservice.service.implementation;
 
 import com.innowise.orderservice.dto.UserResponse;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Service
 public class UserServiceClient {
 
@@ -34,7 +36,10 @@ public class UserServiceClient {
                 .header("X-Internal-Secret", internalSecret)
                 .retrieve()
                 .bodyToMono(UserResponse.class),
-            throwable -> Mono.empty()
+            ex -> {
+              log.warn("Error occurred when accessing user service: {}", ex.getMessage());
+              return Mono.empty();
+            }
         ).block();
 
     return Optional.ofNullable(response);
