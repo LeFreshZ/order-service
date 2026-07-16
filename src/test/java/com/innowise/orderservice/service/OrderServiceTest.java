@@ -20,6 +20,7 @@ import com.innowise.orderservice.entity.OrderItem;
 import com.innowise.orderservice.entity.enums.Status;
 import com.innowise.orderservice.exception.ItemNotFoundException;
 import com.innowise.orderservice.exception.OrderNotFoundException;
+import com.innowise.orderservice.kafka.OrderEventProducer;
 import com.innowise.orderservice.mapper.ItemMapper;
 import com.innowise.orderservice.mapper.OrderItemMapperImpl;
 import com.innowise.orderservice.mapper.OrderMapperImpl;
@@ -52,6 +53,9 @@ class OrderServiceTest {
   @Mock
   private UserServiceClient userServiceClient;
 
+  @Mock
+  private OrderEventProducer eventProducer;
+
   private OrderService service;
 
   private Order order;
@@ -68,7 +72,7 @@ class OrderServiceTest {
     OrderMapperImpl orderMapper = new OrderMapperImpl();
     ReflectionTestUtils.setField(orderMapper, "orderItemMapper", orderItemMapper);
 
-    service = new OrderServiceImpl(orderDao, itemDao, orderMapper, userServiceClient);
+    service = new OrderServiceImpl(orderDao, itemDao, orderMapper, userServiceClient, eventProducer);
 
     item = new Item();
     item.setId(1L);
@@ -116,6 +120,7 @@ class OrderServiceTest {
     assertEquals("Andrey", orderResponse.getUserResponse().getName());
 
     verify(orderDao).save(any(Order.class));
+    verify(eventProducer).sendOrderCreatedEvent(any());
   }
 
   @Test

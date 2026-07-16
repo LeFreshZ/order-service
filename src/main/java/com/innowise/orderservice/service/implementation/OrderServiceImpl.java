@@ -4,6 +4,7 @@ import com.innowise.orderservice.dao.ItemDao;
 import com.innowise.orderservice.dao.OrderDao;
 import com.innowise.orderservice.dto.CreateOrderItemRequest;
 import com.innowise.orderservice.dto.CreateOrderRequest;
+import com.innowise.orderservice.dto.OrderCreatedEvent;
 import com.innowise.orderservice.dto.OrderResponse;
 import com.innowise.orderservice.dto.UpdateOrderRequest;
 import com.innowise.orderservice.dto.UserResponse;
@@ -13,6 +14,7 @@ import com.innowise.orderservice.entity.OrderItem;
 import com.innowise.orderservice.entity.enums.Status;
 import com.innowise.orderservice.exception.ItemNotFoundException;
 import com.innowise.orderservice.exception.OrderNotFoundException;
+import com.innowise.orderservice.kafka.OrderEventProducer;
 import com.innowise.orderservice.mapper.OrderMapper;
 import com.innowise.orderservice.service.OrderService;
 import java.math.BigDecimal;
@@ -37,6 +39,7 @@ public class OrderServiceImpl implements OrderService {
   private final ItemDao itemDao;
   private final OrderMapper mapper;
   private final UserServiceClient userServiceClient;
+  private final OrderEventProducer producer;
 
   @Override
   public OrderResponse createOrder(CreateOrderRequest request) {
@@ -68,7 +71,17 @@ public class OrderServiceImpl implements OrderService {
     order.setOrderItems(orderItems);
     order.setTotalPrice(totalPrice);
 
-    return injectUser(mapper.toResponse(orderDao.save(order)));
+    Order savedOrder = orderDao.save(order);
+
+    OrderCreatedEvent event = new OrderCreatedEvent(
+        savedOrder.getId(),
+        savedOrder.getUserId(),
+        savedOrder.getTotalPrice()
+    );
+
+    producer.sendOrderCreatedEvent(event);
+
+    return injectUser(mapper.toResponse(savedOrder));
   }
 
   @Override

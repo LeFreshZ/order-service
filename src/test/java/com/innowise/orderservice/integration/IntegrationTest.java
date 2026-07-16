@@ -40,6 +40,7 @@ public abstract class IntegrationTest {
     registry.add("spring.datasource.url", TestContainersConfig.POSTGRES::getJdbcUrl);
     registry.add("spring.datasource.username", TestContainersConfig.POSTGRES::getUsername);
     registry.add("spring.datasource.password", TestContainersConfig.POSTGRES::getPassword);
+    registry.add("spring.kafka.bootstrap-servers", TestContainersConfig.KAFKA_CONTAINER::getBootstrapServers);
     registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
     registry.add("user-service.url", () -> "http://localhost:8089");
     registry.add("internal.secret", () -> "test-secret");
